@@ -44,6 +44,7 @@ Backup*
 *.elf
 *.hex
 *.map
+*.o
 
 # Trash files
 *.bak

@@ -57,10 +57,16 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define MODEM_EN_Pin GPIO_PIN_13
-#define MODEM_EN_GPIO_Port GPIOC
+#define MODEM_PWR_Pin GPIO_PIN_13
+#define MODEM_PWR_GPIO_Port GPIOC
 #define GPS_EN_Pin GPIO_PIN_5
 #define GPS_EN_GPIO_Port GPIOA
+#define MODEM_EN_Pin GPIO_PIN_12
+#define MODEM_EN_GPIO_Port GPIOB
+#define LED_R_Pin GPIO_PIN_8
+#define LED_R_GPIO_Port GPIOB
+#define LED_B_Pin GPIO_PIN_9
+#define LED_B_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

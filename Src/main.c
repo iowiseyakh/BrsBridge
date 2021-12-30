@@ -103,32 +103,43 @@ int main(void)
       } HAL_StatusTypeDef;
     */
   uint8_t c;
-  HAL_StatusTypeDef e;
   while (1)
   {
-    if(HAL_UART_Receive(&huart2, U2InBuf + U2Top, 1, 0) == HAL_OK) // Приняли байт
+    if(HAL_UART_Receive(&huart1, U1InBuf + U1Top, 1, 0) == HAL_OK) // Приняли байт
+    {
+      if(++U1Top >= 100) // Увеличивваем вершину кольцевого буфера на 1
+        U1Top = 0; // Если вышли за границу буфера, значит сбрасываем указатель
+      U1InBuf[U1Top] = c; // Записываем на вершину буфера принятый байт
+    }
+    
+    // То же для второго УАРТа
+    if(HAL_UART_Receive(&huart2, U2InBuf + U2Top, 1, 0) == HAL_OK)
     {
       if(++U2Top >= 100)
         U2Top = 0;
       U2InBuf[U2Top] = c;
-    } 
-    if(U2Top != U2Bot)
-    {
-      e=HAL_UART_Transmit(&huart2, U2InBuf + U2Bot, 1, 0);
-      if(e == HAL_OK)
-      {
-        if(++U2Bot >= 100)
-          U2Bot = 0;
-      }
-      else
-        HAL_UART_Transmit(&huart2, U2InBuf + U2Bot, 1, 0);
     }
-
-//    
-    //HAL_UART_Tr
-//    HAL_UART_Transmit(&huart1, (uint8_t*)"Hello World1\r\n", 13, 1000);
-//    HAL_UART_Transmit(&huart2, (uint8_t*)"Hello World2\r\n", 13, 1000);
-//    HAL_Delay(1000);
+    
+    // Отправляем из первого буфера во второй УАРТ и наоборот
+    
+    if(U1Top != U1Bot && // Если вершина не равна основанию, значит в буфере есть данные
+       HAL_UART_GetState(&huart2) != HAL_UART_STATE_BUSY_TX) // УАРТ не занят и готов отправлять новую порцию данных
+    {
+      HAL_UART_Transmit_IT(&huart2, U1InBuf + U1Bot, 1); // Отправляем байт из основания буфера 
+      HAL_GPIO_TogglePin(GPIOB, LED_B_Pin);
+      if(++U1Bot >= 100) // Увеличивваем основание кольцевого буфера на 1
+        U1Bot = 0; // Если вышли за границу буфера, значит сбрасываем указатель
+    }
+    
+    // То же для первого УАРТа
+    if(U2Top != U2Bot && // Если вершина не равна основанию, значит в буфере есть данные
+       HAL_UART_GetState(&huart1) != HAL_UART_STATE_BUSY_TX) // УАРТ не занят и готов отправлять новую порцию данных
+    {
+      HAL_UART_Transmit_IT(&huart1, U2InBuf + U2Bot, 1); // Отправляем байт из основания буфера
+      HAL_GPIO_TogglePin(GPIOB, LED_R_Pin);
+      if(++U2Bot >= 100) // Увеличивваем основание кольцевого буфера на 1
+        U2Bot = 0; // Если вышли за границу буфера, значит сбрасываем указатель
+    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
