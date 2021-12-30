@@ -33,6 +33,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define BUFLEN 100
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -43,9 +44,9 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-  uint8_t U1InBuf[100];
+  uint8_t U1InBuf[BUFLEN];
   int U1Bot = 0, U1Top = 0;
-  uint8_t U2InBuf[100];
+  uint8_t U2InBuf[BUFLEN];
   int U2Bot = 0, U2Top = 0;
 /* USER CODE END PV */
 
@@ -57,7 +58,9 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+}
 /* USER CODE END 0 */
 
 /**
@@ -91,6 +94,10 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+  HAL_GPIO_WritePin(GPIOB, MODEM_EN_Pin, GPIO_PIN_RESET); // Подтягиваем к земле пин
+  HAL_Delay(1500); // Ждем от 1 до 12с, как того требует даташит на модем
+  HAL_GPIO_WritePin(GPIOB, MODEM_EN_Pin, GPIO_PIN_SET); // Отпускаем пин
+  
 
   /* USER CODE END 2 */
 
@@ -107,15 +114,16 @@ int main(void)
   {
     if(HAL_UART_Receive(&huart1, U1InBuf + U1Top, 1, 0) == HAL_OK) // Приняли байт
     {
-      if(++U1Top >= 100) // Увеличивваем вершину кольцевого буфера на 1
+      if(++U1Top >= BUFLEN) // Увеличивваем вершину кольцевого буфера на 1
         U1Top = 0; // Если вышли за границу буфера, значит сбрасываем указатель
       U1InBuf[U1Top] = c; // Записываем на вершину буфера принятый байт
+      //HAL_GPIO_TogglePin(GPIOB, LED_R_Pin);
     }
     
     // То же для второго УАРТа
     if(HAL_UART_Receive(&huart2, U2InBuf + U2Top, 1, 0) == HAL_OK)
     {
-      if(++U2Top >= 100)
+      if(++U2Top >= BUFLEN)
         U2Top = 0;
       U2InBuf[U2Top] = c;
     }
@@ -126,8 +134,8 @@ int main(void)
        HAL_UART_GetState(&huart2) != HAL_UART_STATE_BUSY_TX) // УАРТ не занят и готов отправлять новую порцию данных
     {
       HAL_UART_Transmit_IT(&huart2, U1InBuf + U1Bot, 1); // Отправляем байт из основания буфера 
-      HAL_GPIO_TogglePin(GPIOB, LED_B_Pin);
-      if(++U1Bot >= 100) // Увеличивваем основание кольцевого буфера на 1
+      HAL_GPIO_TogglePin(GPIOB, LED_B_Pin); // Блымаем блымочкой
+      if(++U1Bot >= BUFLEN) // Увеличивваем основание кольцевого буфера на 1
         U1Bot = 0; // Если вышли за границу буфера, значит сбрасываем указатель
     }
     
@@ -136,8 +144,8 @@ int main(void)
        HAL_UART_GetState(&huart1) != HAL_UART_STATE_BUSY_TX) // УАРТ не занят и готов отправлять новую порцию данных
     {
       HAL_UART_Transmit_IT(&huart1, U2InBuf + U2Bot, 1); // Отправляем байт из основания буфера
-      HAL_GPIO_TogglePin(GPIOB, LED_R_Pin);
-      if(++U2Bot >= 100) // Увеличивваем основание кольцевого буфера на 1
+      HAL_GPIO_TogglePin(GPIOB, LED_R_Pin); // Блымаем блымочкой
+      if(++U2Bot >= BUFLEN) // Увеличивваем основание кольцевого буфера на 1
         U2Bot = 0; // Если вышли за границу буфера, значит сбрасываем указатель
     }
     /* USER CODE END WHILE */
