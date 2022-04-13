@@ -3,13 +3,13 @@
     <StLinkDriver>
         <stlinkserialNo>33422487</stlinkserialNo>
         <stlinkfoundProbes />
-        <stlinkResetStyle>4</stlinkResetStyle>
+        <stlinkResetStyle>0</stlinkResetStyle>
         <stlinkResetStrategy>3</stlinkResetStrategy>
         <CStepIntDis>_ 0</CStepIntDis>
         <LeaveTargetRunning>_ 0</LeaveTargetRunning>
     </StLinkDriver>
     <DebugChecksum>
-        <Checksum>2976074833</Checksum>
+        <Checksum>247405627</Checksum>
     </DebugChecksum>
     <Exceptions>
         <StopOnUncaught>_ 0</StopOnUncaught>
@@ -55,9 +55,9 @@
     </Breakpoints2>
     <Aliases>
         <A0>_ "C:\Users\user\Documents\Projects\BrsBridge2\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_rcc.c" "C:\Users\user\Documents\Projects\BrsBridge\Drivers\STM32L0xx_HAL_Driver\Src\stm32l0xx_hal_rcc.c"</A0>
-        <A1>_ "C:\Users\user\Documents\Projects\BrsBridge2\EWARM\startup_stm32l073xx.s" "C:\Users\user\Documents\Projects\BrsBridge\EWARM\startup_stm32l073xx.s"</A1>
+        <A1>_ "C:\Users\user\Documents\Projects\BrsBridge2\EWARM\startup_stm32l073xx.s" ""</A1>
         <A2>_ "C:\Users\user\Documents\Projects\BrsBridge2\Src\main.c" "C:\Users\user\Documents\Projects\BrsBridge\Src\main.c"</A2>
         <Count>3</Count>
-        <SuppressDialog>1</SuppressDialog>
+        <SuppressDialog>0</SuppressDialog>
     </Aliases>
 </settings>
